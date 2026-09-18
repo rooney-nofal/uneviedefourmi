@@ -1,0 +1,11 @@
++++ E1 +++
+f1 - Sv - S1
+f2 - Sv - Sd
++++ E2 +++
+f1 - S1 - S2
+f3 - Sv - Sd
++++ E3 +++
+f1 - S2 - Sd
+f4 - Sv - Sd
++++ E4 +++
+f5 - Sv - Sd

@@ -1,0 +1,304 @@
++++ E1 +++
+f1 - Sv - S1
++++ E2 +++
+f1 - S1 - S2
+f2 - Sv - S1
++++ E3 +++
+f1 - S2 - S3
+f2 - S1 - S2
+f3 - Sv - S1
++++ E4 +++
+f1 - S3 - S4
+f2 - S2 - S3
+f3 - S1 - S2
+f4 - Sv - S1
++++ E5 +++
+f1 - S4 - Sd
+f2 - S3 - S4
+f3 - S2 - S3
+f4 - S1 - S2
+f5 - Sv - S1
++++ E6 +++
+f2 - S4 - Sd
+f3 - S3 - S4
+f4 - S2 - S3
+f5 - S1 - S2
+f6 - Sv - S1
++++ E7 +++
+f3 - S4 - Sd
+f4 - S3 - S4
+f5 - S2 - S3
+f6 - S1 - S2
+f7 - Sv - S1
++++ E8 +++
+f4 - S4 - Sd
+f5 - S3 - S4
+f6 - S2 - S3
+f7 - S1 - S2
+f8 - Sv - S1
++++ E9 +++
+f5 - S4 - Sd
+f6 - S3 - S4
+f7 - S2 - S3
+f8 - S1 - S2
+f9 - Sv - S1
++++ E10 +++
+f6 - S4 - Sd
+f7 - S3 - S4
+f8 - S2 - S3
+f9 - S1 - S2
+f10 - Sv - S1
++++ E11 +++
+f7 - S4 - Sd
+f8 - S3 - S4
+f9 - S2 - S3
+f10 - S1 - S2
+f11 - Sv - S1
++++ E12 +++
+f8 - S4 - Sd
+f9 - S3 - S4
+f10 - S2 - S3
+f11 - S1 - S2
+f12 - Sv - S1
++++ E13 +++
+f9 - S4 - Sd
+f10 - S3 - S4
+f11 - S2 - S3
+f12 - S1 - S2
+f13 - Sv - S1
++++ E14 +++
+f10 - S4 - Sd
+f11 - S3 - S4
+f12 - S2 - S3
+f13 - S1 - S2
+f14 - Sv - S1
++++ E15 +++
+f11 - S4 - Sd
+f12 - S3 - S4
+f13 - S2 - S3
+f14 - S1 - S2
+f15 - Sv - S1
++++ E16 +++
+f12 - S4 - Sd
+f13 - S3 - S4
+f14 - S2 - S3
+f15 - S1 - S2
+f16 - Sv - S1
++++ E17 +++
+f13 - S4 - Sd
+f14 - S3 - S4
+f15 - S2 - S3
+f16 - S1 - S2
+f17 - Sv - S1
++++ E18 +++
+f14 - S4 - Sd
+f15 - S3 - S4
+f16 - S2 - S3
+f17 - S1 - S2
+f18 - Sv - S1
++++ E19 +++
+f15 - S4 - Sd
+f16 - S3 - S4
+f17 - S2 - S3
+f18 - S1 - S2
+f19 - Sv - S1
++++ E20 +++
+f16 - S4 - Sd
+f17 - S3 - S4
+f18 - S2 - S3
+f19 - S1 - S2
+f20 - Sv - S1
++++ E21 +++
+f17 - S4 - Sd
+f18 - S3 - S4
+f19 - S2 - S3
+f20 - S1 - S2
+f21 - Sv - S1
++++ E22 +++
+f18 - S4 - Sd
+f19 - S3 - S4
+f20 - S2 - S3
+f21 - S1 - S2
+f22 - Sv - S1
++++ E23 +++
+f19 - S4 - Sd
+f20 - S3 - S4
+f21 - S2 - S3
+f22 - S1 - S2
+f23 - Sv - S1
++++ E24 +++
+f20 - S4 - Sd
+f21 - S3 - S4
+f22 - S2 - S3
+f23 - S1 - S2
+f24 - Sv - S1
++++ E25 +++
+f21 - S4 - Sd
+f22 - S3 - S4
+f23 - S2 - S3
+f24 - S1 - S2
+f25 - Sv - S1
++++ E26 +++
+f22 - S4 - Sd
+f23 - S3 - S4
+f24 - S2 - S3
+f25 - S1 - S2
+f26 - Sv - S1
++++ E27 +++
+f23 - S4 - Sd
+f24 - S3 - S4
+f25 - S2 - S3
+f26 - S1 - S2
+f27 - Sv - S1
++++ E28 +++
+f24 - S4 - Sd
+f25 - S3 - S4
+f26 - S2 - S3
+f27 - S1 - S2
+f28 - Sv - S1
++++ E29 +++
+f25 - S4 - Sd
+f26 - S3 - S4
+f27 - S2 - S3
+f28 - S1 - S2
+f29 - Sv - S1
++++ E30 +++
+f26 - S4 - Sd
+f27 - S3 - S4
+f28 - S2 - S3
+f29 - S1 - S2
+f30 - Sv - S1
++++ E31 +++
+f27 - S4 - Sd
+f28 - S3 - S4
+f29 - S2 - S3
+f30 - S1 - S2
+f31 - Sv - S1
++++ E32 +++
+f28 - S4 - Sd
+f29 - S3 - S4
+f30 - S2 - S3
+f31 - S1 - S2
+f32 - Sv - S1
++++ E33 +++
+f29 - S4 - Sd
+f30 - S3 - S4
+f31 - S2 - S3
+f32 - S1 - S2
+f33 - Sv - S1
++++ E34 +++
+f30 - S4 - Sd
+f31 - S3 - S4
+f32 - S2 - S3
+f33 - S1 - S2
+f34 - Sv - S1
++++ E35 +++
+f31 - S4 - Sd
+f32 - S3 - S4
+f33 - S2 - S3
+f34 - S1 - S2
+f35 - Sv - S1
++++ E36 +++
+f32 - S4 - Sd
+f33 - S3 - S4
+f34 - S2 - S3
+f35 - S1 - S2
+f36 - Sv - S1
++++ E37 +++
+f33 - S4 - Sd
+f34 - S3 - S4
+f35 - S2 - S3
+f36 - S1 - S2
+f37 - Sv - S1
++++ E38 +++
+f34 - S4 - Sd
+f35 - S3 - S4
+f36 - S2 - S3
+f37 - S1 - S2
+f38 - Sv - S1
++++ E39 +++
+f35 - S4 - Sd
+f36 - S3 - S4
+f37 - S2 - S3
+f38 - S1 - S2
+f39 - Sv - S1
++++ E40 +++
+f36 - S4 - Sd
+f37 - S3 - S4
+f38 - S2 - S3
+f39 - S1 - S2
+f40 - Sv - S1
++++ E41 +++
+f37 - S4 - Sd
+f38 - S3 - S4
+f39 - S2 - S3
+f40 - S1 - S2
+f41 - Sv - S1
++++ E42 +++
+f38 - S4 - Sd
+f39 - S3 - S4
+f40 - S2 - S3
+f41 - S1 - S2
+f42 - Sv - S1
++++ E43 +++
+f39 - S4 - Sd
+f40 - S3 - S4
+f41 - S2 - S3
+f42 - S1 - S2
+f43 - Sv - S1
++++ E44 +++
+f40 - S4 - Sd
+f41 - S3 - S4
+f42 - S2 - S3
+f43 - S1 - S2
+f44 - Sv - S1
++++ E45 +++
+f41 - S4 - Sd
+f42 - S3 - S4
+f43 - S2 - S3
+f44 - S1 - S2
+f45 - Sv - S1
++++ E46 +++
+f42 - S4 - Sd
+f43 - S3 - S4
+f44 - S2 - S3
+f45 - S1 - S2
+f46 - Sv - S1
++++ E47 +++
+f43 - S4 - Sd
+f44 - S3 - S4
+f45 - S2 - S3
+f46 - S1 - S2
+f47 - Sv - S1
++++ E48 +++
+f44 - S4 - Sd
+f45 - S3 - S4
+f46 - S2 - S3
+f47 - S1 - S2
+f48 - Sv - S1
++++ E49 +++
+f45 - S4 - Sd
+f46 - S3 - S4
+f47 - S2 - S3
+f48 - S1 - S2
+f49 - Sv - S1
++++ E50 +++
+f46 - S4 - Sd
+f47 - S3 - S4
+f48 - S2 - S3
+f49 - S1 - S2
+f50 - Sv - S1
++++ E51 +++
+f47 - S4 - Sd
+f48 - S3 - S4
+f49 - S2 - S3
+f50 - S1 - S2
++++ E52 +++
+f48 - S4 - Sd
+f49 - S3 - S4
+f50 - S2 - S3
++++ E53 +++
+f49 - S4 - Sd
+f50 - S3 - S4
++++ E54 +++
+f50 - S4 - Sd

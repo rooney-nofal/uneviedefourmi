@@ -1,0 +1,253 @@
++++ E1 +++
+f1 - Sv - S1
+f2 - Sv - S2
++++ E2 +++
+f1 - S1 - S6
+f2 - S2 - S7
+f3 - Sv - S1
+f4 - Sv - S2
++++ E3 +++
+f1 - S6 - S5
+f2 - S7 - S9
+f3 - S1 - S6
+f4 - S2 - S7
+f5 - Sv - S1
+f6 - Sv - S2
++++ E4 +++
+f1 - S5 - S4
+f2 - S9 - Sd
+f3 - S6 - S5
+f4 - S7 - S9
+f5 - S1 - S6
+f6 - S2 - S7
+f7 - Sv - S1
+f8 - Sv - S2
++++ E5 +++
+f1 - S4 - Sd
+f3 - S5 - S4
+f4 - S9 - Sd
+f5 - S6 - S5
+f6 - S7 - S9
+f7 - S1 - S6
+f8 - S2 - S7
+f9 - Sv - S1
+f10 - Sv - S2
++++ E6 +++
+f3 - S4 - Sd
+f5 - S5 - S4
+f6 - S9 - Sd
+f7 - S6 - S5
+f8 - S7 - S9
+f9 - S1 - S6
+f10 - S2 - S7
+f11 - Sv - S1
+f12 - Sv - S2
++++ E7 +++
+f5 - S4 - Sd
+f7 - S5 - S4
+f8 - S9 - Sd
+f9 - S6 - S5
+f10 - S7 - S9
+f11 - S1 - S6
+f12 - S2 - S7
+f13 - Sv - S1
+f14 - Sv - S2
++++ E8 +++
+f7 - S4 - Sd
+f9 - S5 - S4
+f10 - S9 - Sd
+f11 - S6 - S5
+f12 - S7 - S9
+f13 - S1 - S6
+f14 - S2 - S7
+f15 - Sv - S1
+f16 - Sv - S2
++++ E9 +++
+f9 - S4 - Sd
+f11 - S5 - S4
+f12 - S9 - Sd
+f13 - S6 - S5
+f14 - S7 - S9
+f15 - S1 - S6
+f16 - S2 - S7
+f17 - Sv - S1
+f18 - Sv - S2
++++ E10 +++
+f11 - S4 - Sd
+f13 - S5 - S4
+f14 - S9 - Sd
+f15 - S6 - S5
+f16 - S7 - S9
+f17 - S1 - S6
+f18 - S2 - S7
+f19 - Sv - S1
+f20 - Sv - S2
++++ E11 +++
+f13 - S4 - Sd
+f15 - S5 - S4
+f16 - S9 - Sd
+f17 - S6 - S5
+f18 - S7 - S9
+f19 - S1 - S6
+f20 - S2 - S7
+f21 - Sv - S1
+f22 - Sv - S2
++++ E12 +++
+f15 - S4 - Sd
+f17 - S5 - S4
+f18 - S9 - Sd
+f19 - S6 - S5
+f20 - S7 - S9
+f21 - S1 - S6
+f22 - S2 - S7
+f23 - Sv - S1
+f24 - Sv - S2
++++ E13 +++
+f17 - S4 - Sd
+f19 - S5 - S4
+f20 - S9 - Sd
+f21 - S6 - S5
+f22 - S7 - S9
+f23 - S1 - S6
+f24 - S2 - S7
+f25 - Sv - S1
+f26 - Sv - S2
++++ E14 +++
+f19 - S4 - Sd
+f21 - S5 - S4
+f22 - S9 - Sd
+f23 - S6 - S5
+f24 - S7 - S9
+f25 - S1 - S6
+f26 - S2 - S7
+f27 - Sv - S1
+f28 - Sv - S2
++++ E15 +++
+f21 - S4 - Sd
+f23 - S5 - S4
+f24 - S9 - Sd
+f25 - S6 - S5
+f26 - S7 - S9
+f27 - S1 - S6
+f28 - S2 - S7
+f29 - Sv - S1
+f30 - Sv - S2
++++ E16 +++
+f23 - S4 - Sd
+f25 - S5 - S4
+f26 - S9 - Sd
+f27 - S6 - S5
+f28 - S7 - S9
+f29 - S1 - S6
+f30 - S2 - S7
+f31 - Sv - S1
+f32 - Sv - S2
++++ E17 +++
+f25 - S4 - Sd
+f27 - S5 - S4
+f28 - S9 - Sd
+f29 - S6 - S5
+f30 - S7 - S9
+f31 - S1 - S6
+f32 - S2 - S7
+f33 - Sv - S1
+f34 - Sv - S2
++++ E18 +++
+f27 - S4 - Sd
+f29 - S5 - S4
+f30 - S9 - Sd
+f31 - S6 - S5
+f32 - S7 - S9
+f33 - S1 - S6
+f34 - S2 - S7
+f35 - Sv - S1
+f36 - Sv - S2
++++ E19 +++
+f29 - S4 - Sd
+f31 - S5 - S4
+f32 - S9 - Sd
+f33 - S6 - S5
+f34 - S7 - S9
+f35 - S1 - S6
+f36 - S2 - S7
+f37 - Sv - S1
+f38 - Sv - S2
++++ E20 +++
+f31 - S4 - Sd
+f33 - S5 - S4
+f34 - S9 - Sd
+f35 - S6 - S5
+f36 - S7 - S9
+f37 - S1 - S6
+f38 - S2 - S7
+f39 - Sv - S1
+f40 - Sv - S2
++++ E21 +++
+f33 - S4 - Sd
+f35 - S5 - S4
+f36 - S9 - Sd
+f37 - S6 - S5
+f38 - S7 - S9
+f39 - S1 - S6
+f40 - S2 - S7
+f41 - Sv - S1
+f42 - Sv - S2
++++ E22 +++
+f35 - S4 - Sd
+f37 - S5 - S4
+f38 - S9 - Sd
+f39 - S6 - S5
+f40 - S7 - S9
+f41 - S1 - S6
+f42 - S2 - S7
+f43 - Sv - S1
+f44 - Sv - S2
++++ E23 +++
+f37 - S4 - Sd
+f39 - S5 - S4
+f40 - S9 - Sd
+f41 - S6 - S5
+f42 - S7 - S9
+f43 - S1 - S6
+f44 - S2 - S7
+f45 - Sv - S1
+f46 - Sv - S2
++++ E24 +++
+f39 - S4 - Sd
+f41 - S5 - S4
+f42 - S9 - Sd
+f43 - S6 - S5
+f44 - S7 - S9
+f45 - S1 - S6
+f46 - S2 - S7
+f47 - Sv - S1
+f48 - Sv - S2
++++ E25 +++
+f41 - S4 - Sd
+f43 - S5 - S4
+f44 - S9 - Sd
+f45 - S6 - S5
+f46 - S7 - S9
+f47 - S1 - S6
+f48 - S2 - S7
+f49 - Sv - S2
++++ E26 +++
+f43 - S4 - Sd
+f45 - S5 - S4
+f46 - S9 - Sd
+f47 - S6 - S5
+f48 - S7 - S9
+f49 - S2 - S7
+f50 - Sv - S2
++++ E27 +++
+f45 - S4 - Sd
+f47 - S5 - S4
+f48 - S9 - Sd
+f49 - S7 - S9
+f50 - S2 - S7
++++ E28 +++
+f47 - S4 - Sd
+f49 - S9 - Sd
+f50 - S7 - S9
++++ E29 +++
+f50 - S9 - Sd
