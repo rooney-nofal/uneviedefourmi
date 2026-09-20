@@ -1,0 +1,12 @@
+Ant hill: zero
+Ants: 2
+Rooms: 4
+Tunnels: 4
+Minimum duration: 2 step(s)
+
++++ E1 +++
+f1 - Sv - S1
+f2 - Sv - S2
++++ E2 +++
+f1 - S1 - Sd
+f2 - S2 - Sd

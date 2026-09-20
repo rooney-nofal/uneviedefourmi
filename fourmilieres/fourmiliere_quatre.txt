@@ -1,16 +1,23 @@
-f=10
-S1 { 2 }
-S2
-S3
-S4 { 2 }
-S5
-S6
-S3 - S4
-Sv - S1
-S1 - S2
-S2 - S4
-S4 - S5
-S5 - Sd
-S4 - S6
-S6 - Sd
-S1 - S3
+name=quatre
+ants=10
+
+[capacities]
+Sv=10
+Sd=10
+S1=2
+S2=1
+S3=1
+S4=2
+S5=1
+S6=1
+
+[tunnels]
+S3-S4
+Sv-S1
+S1-S2
+S2-S4
+S4-S5
+S5-Sd
+S4-S6
+S6-Sd
+S1-S3

@@ -1,3 +1,2 @@
-networkx>=3.0
-matplotlib>=3.7
-pillow>=10.0
+networkx
+matplotlib

@@ -1,411 +1,134 @@
-"""
-ants.py — Une vie de fourmi
-============================
-
-Ce module contient les classes et fonctions permettant le bon déplacement
-des fourmis au sein de la fourmilière :
-
-    - Salle       : une salle de la fourmilière (nom + capacité)
-    - Fourmi      : une fourmi (numéro + position + trajet)
-    - Fourmiliere : la fourmilière complète (salles, tunnels, fourmis)
-                    avec le solveur qui calcule le nombre MINIMUM d'étapes.
-
-Méthode de résolution (optimale) :
-    On déplie la fourmilière dans le temps ("graphe temporel") : chaque
-    salle est dupliquée pour chaque instant t = 0, 1, 2, ... T.
-    Se déplacer d'une salle à une autre devient un arc entre l'instant t
-    et l'instant t+1. Les capacités des salles et des tunnels deviennent
-    des capacités d'arcs. Faire passer F fourmis du vestibule (t = 0)
-    au dortoir (t = T) revient alors à un problème de FLOT MAXIMUM,
-    résolu par NetworkX. On cherche le plus petit T pour lequel le flot
-    atteint F : ce T est, par construction, le minimum d'étapes possible.
-
-Règles respectées (cf. le brief) :
-    - une salle ne contient jamais plus de fourmis que sa capacité
-      (1 par défaut, X si la salle est notée S{X}) ;
-    - le vestibule (Sv) et le dortoir (Sd) ont une capacité illimitée ;
-    - un tunnel ne laisse passer qu'UNE fourmi par étape ;
-    - une fourmi peut entrer dans une salle si celle-ci a de la place,
-      ou si une fourmi qui l'occupe est en train de partir ;
-    - à chaque étape, une fourmi attend ou se déplace vers une salle
-      adjacente ; les tunnels sont traversés instantanément.
-"""
-
-from __future__ import annotations
-
-import re
-from dataclasses import dataclass, field
+"""Core solver for the ant-hill project."""
 
 import networkx as nx
 
 
-# ---------------------------------------------------------------------------
-# Les classes du modèle
-# ---------------------------------------------------------------------------
+def build_graph(data):
+    """Build the physical ant-hill graph from one dataset."""
+    graph = nx.Graph()  # Creates an undirected graph because tunnels can be used in both directions.
 
-@dataclass
-class Salle:
-    """Une salle de la fourmilière.
+    for room, capacity in data["capacities"].items():  # Goes through every room and its capacity.
+        graph.add_node(room, capacity=capacity)  # Adds the room and stores its capacity.
 
-    Attributs :
-        nom      : identifiant de la salle ("Sv", "S1", ..., "Sd")
-        capacite : nombre maximum de fourmis présentes en même temps
-                   (None = capacité illimitée, cas de Sv et Sd)
-    """
+    graph.add_edges_from(data["tunnels"])  # Adds all tunnels.
 
-    nom: str
-    capacite: int | None = 1
-
-    @property
-    def illimitee(self) -> bool:
-        """Vrai si la salle peut accueillir un nombre illimité de fourmis."""
-        return self.capacite is None
-
-    def __str__(self) -> str:
-        if self.illimitee:
-            return f"{self.nom} (capacité illimitée)"
-        return f"{self.nom} (capacité {self.capacite})"
+    return graph
 
 
-@dataclass
-class Fourmi:
-    """Une fourmi de la colonie.
+def solve_ant_hill(data):
+    """Find the minimum duration and the movement list E1, E2, E3..."""
+    ant_count = data["ants"]  # Reads the total number F of ants.
+    graph = build_graph(data)  # Builds the physical graph.
 
-    Attributs :
-        numero   : numéro de la fourmi (1, 2, ..., F) → affichée "f1", "f2"...
-        position : nom de la salle où elle se trouve actuellement
-        trajet   : liste des salles occupées à chaque étape (t = 0, 1, ...),
-                   utilisée ensuite pour l'animation.
-    """
+    # ======================================================================
+    # STEP 1 — TEST DURATIONS WITH A TIME-EXPANDED GRAPH
+    # ======================================================================
 
-    numero: int
-    position: str = "Sv"
-    trajet: list[str] = field(default_factory=list)
+    start_duration = nx.shortest_path_length(graph, "Sv", "Sd")  # Lower bound for one ant.
+    steps = None  # No solution has been found yet.
+    optimal_duration = None  # No optimal duration has been found yet.
 
-    @property
-    def nom(self) -> str:
-        """Nom affiché de la fourmi, ex. 'f3'."""
-        return f"f{self.numero}"
+    for duration in range(start_duration, start_duration + ant_count):  # Tests T in increasing order.
+        time_graph = nx.DiGraph()  # Creates the directed time-expanded graph.
+        source = "SOURCE"  # Technical node where the flow starts.
+        sink = "SINK"  # Technical node where the flow ends.
 
-    def deplacer(self, destination: str) -> None:
-        """Déplace la fourmi vers la salle `destination`."""
-        self.position = destination
+        for time in range(duration + 1):  # Creates each instant from 0 to T.
+            for room in graph.nodes:  # Copies each room at this instant.
+                capacity = graph.nodes[room]["capacity"]  # Reads the room capacity.
+                entry = (room, time, "entry")  # Entry side of the room.
+                exit_node = (room, time, "exit")  # Exit side of the room.
+                time_graph.add_edge(entry, exit_node, capacity=capacity)  # Enforces room capacity.
 
-    def __str__(self) -> str:
-        return f"{self.nom} ({self.position})"
+        for time in range(duration):  # Creates every transition from t to t+1.
+            for room in graph.nodes:  # Allows an ant to wait.
+                wait_departure = (room, time, "exit")  # Position before waiting.
+                wait_arrival = (room, time + 1, "entry")  # Same room at the next instant.
+                time_graph.add_edge(wait_departure, wait_arrival, capacity=ant_count)  # Adds waiting.
 
+            for room_a, room_b in graph.edges:  # Goes through all tunnels.
+                departure_a = (room_a, time, "exit")  # Departure from A.
+                arrival_b = (room_b, time + 1, "entry")  # Arrival in B.
+                departure_b = (room_b, time, "exit")  # Departure from B.
+                arrival_a = (room_a, time + 1, "entry")  # Arrival in A.
+                time_graph.add_edge(departure_a, arrival_b, capacity=ant_count)  # A to B.
+                time_graph.add_edge(departure_b, arrival_a, capacity=ant_count)  # B to A.
 
-@dataclass
-class Deplacement:
-    """Un déplacement élémentaire : une fourmi passe d'une salle à une autre."""
+        general_departure = ("Sv", 0, "entry")  # Initial vestibule entry.
+        general_arrival = ("Sd", duration, "exit")  # Dormitory exit at tested time T.
+        time_graph.add_edge(source, general_departure, capacity=ant_count)  # Injects F units.
+        time_graph.add_edge(general_arrival, sink, capacity=ant_count)  # Collects F arrivals.
 
-    fourmi: str    # ex. "f1"
-    origine: str   # ex. "Sv"
-    arrivee: str   # ex. "S1"
+        flow_value, flow = nx.maximum_flow(time_graph, source, sink)  # Computes arrivals and global flow.
 
-    def __str__(self) -> str:
-        return f"{self.fourmi} - {self.origine} - {self.arrivee}"
+        if flow_value < ant_count:  # Checks whether all ants can arrive.
+            continue  # Tests the next duration.
 
+        optimal_duration = duration  # The first successful duration is minimal.
 
-# ---------------------------------------------------------------------------
-# La fourmilière et son solveur
-# ---------------------------------------------------------------------------
+        # ==================================================================
+        # STEP 2 — TRANSFORM GLOBAL FLOW INTO ONE PATH PER ANT
+        # ==================================================================
 
-class Fourmiliere:
-    """La fourmilière : ses salles, ses tunnels, ses fourmis, et le solveur."""
+        remaining_flow = {}  # Stores only edges that actually carry flow.
 
-    # Motifs de lecture des fichiers .txt
-    _MOTIF_FOURMIS = re.compile(r"^[fF]\s*=\s*(\d+)$")
-    _MOTIF_SALLE = re.compile(r"^(\w+)\s*\{\s*(\d+)\s*\}$")
-    _MOTIF_TUNNEL = re.compile(r"^(\w+)\s*-\s*(\w+)$")
+        for departure, destinations in flow.items():  # Goes through each flow departure node.
+            for arrival, quantity in destinations.items():  # Goes through each destination and quantity.
+                if quantity > 0:  # Keeps only used edges.
+                    remaining_flow[(departure, arrival)] = quantity  # Stores available units.
 
-    def __init__(self, nom: str, nb_fourmis: int) -> None:
-        self.nom = nom
-        self.nb_fourmis = nb_fourmis
-        # Sv et Sd existent toujours, avec une capacité illimitée.
-        self.salles: dict[str, Salle] = {
-            "Sv": Salle("Sv", capacite=None),
-            "Sd": Salle("Sd", capacite=None),
-        }
-        self.tunnels: list[tuple[str, str]] = []
-        self.fourmis: list[Fourmi] = [
-            Fourmi(numero=i + 1) for i in range(nb_fourmis)
-        ]
+        paths = []  # Will contain one reconstructed path per ant.
 
-    # ------------------------------------------------------------------
-    # Lecture d'un fichier fourmilière
-    # ------------------------------------------------------------------
+        for ant in range(1, ant_count + 1):  # Builds a path for ant 1 through ant F.
+            position = source  # Starts at SOURCE.
+            path = [source]  # Starts the path.
 
-    @classmethod
-    def depuis_fichier(cls, chemin: str) -> "Fourmiliere":
-        """Construit une Fourmiliere à partir d'un fichier .txt du brief."""
-        nom = chemin.replace("\\", "/").split("/")[-1].removesuffix(".txt")
-        nb_fourmis: int | None = None
-        salles: list[Salle] = []
-        tunnels: list[tuple[str, str]] = []
+            while position != sink:  # Continues until SINK is reached.
+                next_position = None  # Will store the next node.
 
-        with open(chemin, encoding="utf-8") as fichier:
-            for ligne in fichier:
-                ligne = ligne.strip()          # espaces, \r et \n éventuels
-                if not ligne:
+                for neighbor in time_graph.successors(position):  # Goes through directly reachable nodes.
+                    available_quantity = remaining_flow.get((position, neighbor), 0)  # Reads remaining flow.
+
+                    if available_quantity > 0:  # Checks whether this edge can still be used.
+                        next_position = neighbor  # Selects the neighbor.
+                        break  # Stops searching after finding a valid continuation.
+
+                if next_position is None:  # Detects an impossible reconstruction.
+                    raise RuntimeError("Unable to reconstruct ant paths.")
+
+                remaining_flow[(position, next_position)] -= 1  # Consumes one flow unit.
+                path.append(next_position)  # Adds the selected node to the path.
+                position = next_position  # Continues from this node.
+
+            paths.append((ant, path))  # Stores the complete path.
+
+        # ==================================================================
+        # STEP 3 — CREATE THE MOVEMENTS E1, E2, E3...
+        # ==================================================================
+
+        steps = []  # Will contain every solution step.
+
+        for _ in range(duration):  # Repeats once for each step.
+            steps.append([])  # Adds an empty movement list.
+
+        for ant, path in paths:  # Goes through each ant path.
+            for node_a, node_b in zip(path, path[1:]):  # Forms consecutive node pairs.
+                if not isinstance(node_a, tuple) or not isinstance(node_b, tuple):  # Ignores SOURCE and SINK.
                     continue
-                if (m := cls._MOTIF_FOURMIS.match(ligne)):
-                    nb_fourmis = int(m.group(1))
-                elif (m := cls._MOTIF_TUNNEL.match(ligne)):
-                    tunnels.append((m.group(1), m.group(2)))
-                elif (m := cls._MOTIF_SALLE.match(ligne)):
-                    salles.append(Salle(m.group(1), int(m.group(2))))
-                else:                          # salle simple, ex. "S9"
-                    salles.append(Salle(ligne, 1))
 
-        if nb_fourmis is None:
-            raise ValueError(f"{chemin} : nombre de fourmis introuvable (f=...)")
+                room_a, time_a, side_a = node_a  # Splits the first time node.
+                room_b, time_b, side_b = node_b  # Splits the second time node.
+                moves_forward_in_time = time_b == time_a + 1  # Checks t -> t+1.
+                changes_room = room_a != room_b  # Rejects waiting.
+                crosses_tunnel = side_a == "exit" and side_b == "entry"  # Keeps exit -> entry moves.
 
-        fourmiliere = cls(nom, nb_fourmis)
-        for salle in salles:
-            fourmiliere.ajouter_salle(salle)
-        for u, v in tunnels:
-            fourmiliere.ajouter_tunnel(u, v)
-        return fourmiliere
+                if moves_forward_in_time and changes_room and crosses_tunnel:  # Keeps a real tunnel movement.
+                    movement = (ant, room_a, room_b)  # Ant number, origin, destination.
+                    steps[time_b - 1].append(movement)  # Stores the movement in E1, E2...
 
-    def ajouter_salle(self, salle: Salle) -> None:
-        """Ajoute une salle (Sv et Sd sont déjà présentes)."""
-        if salle.nom not in ("Sv", "Sd"):
-            self.salles[salle.nom] = salle
+        break  # Stops because the first feasible duration is optimal.
 
-    def ajouter_tunnel(self, u: str, v: str) -> None:
-        """Ajoute un tunnel entre les salles u et v (sans doublon)."""
-        for nom in (u, v):
-            if nom not in self.salles:      # salle citée mais non déclarée
-                self.salles[nom] = Salle(nom, 1)
-        if (u, v) not in self.tunnels and (v, u) not in self.tunnels:
-            self.tunnels.append((u, v))
+    if steps is None:  # Checks that a solution was found.
+        raise RuntimeError("No solution found.")
 
-    # ------------------------------------------------------------------
-    # Représentation en graphe (NetworkX)
-    # ------------------------------------------------------------------
-
-    def graphe(self) -> nx.Graph:
-        """La fourmilière sous forme de graphe : salles = sommets,
-        tunnels = arêtes."""
-        g = nx.Graph()
-        for salle in self.salles.values():
-            g.add_node(salle.nom, capacite=salle.capacite)
-        g.add_edges_from(self.tunnels)
-        return g
-
-    # ------------------------------------------------------------------
-    # Le solveur : graphe temporel + flot maximum
-    # ------------------------------------------------------------------
-
-    def _construire_reseau_temporel(self, horizon: int) -> nx.DiGraph:
-        """Construit le graphe temporel pour `horizon` étapes.
-
-        Chaque salle S est dupliquée en deux sommets par instant t :
-        (S, 'e', t) = entrée et (S, 's', t) = sortie, reliés par un arc
-        dont la capacité est celle de la salle : c'est ce qui limite le
-        nombre de fourmis présentes en même temps.
-
-        Chaque tunnel devient, pour chaque instant, un petit sommet
-        intermédiaire de capacité 1 : c'est ce qui impose la règle
-        « une seule fourmi par tunnel et par étape », dans un sens
-        comme dans l'autre.
-
-        Attendre dans une salle = un arc (S, 's', t) → (S, 'e', t+1).
-        Le dortoir est absorbant : on y entre, on n'en sort plus.
-        """
-        F = self.nb_fourmis        # F joue le rôle de « capacité infinie »
-        reseau = nx.DiGraph()
-
-        # Les F fourmis sont injectées dans le vestibule à l'instant 0.
-        reseau.add_edge("SOURCE", ("Sv", "e", 0), capacity=F)
-
-        for t in range(horizon + 1):
-            for salle in self.salles.values():
-                if salle.nom == "Sd":
-                    # Toute fourmi entrée au dortoir a atteint l'objectif.
-                    reseau.add_edge(("Sd", "e", t), "PUITS", capacity=F)
-                    continue
-                capacite = F if salle.illimitee else salle.capacite
-                reseau.add_edge((salle.nom, "e", t), (salle.nom, "s", t),
-                                capacity=capacite)
-                if t < horizon:    # attendre sur place jusqu'à l'instant t+1
-                    reseau.add_edge((salle.nom, "s", t),
-                                    (salle.nom, "e", t + 1), capacity=F)
-
-        for t in range(horizon):
-            for u, v in self.tunnels:
-                # Le « sas » du tunnel : une seule fourmi par étape.
-                sas_e = ("tunnel", u, v, t, "e")
-                sas_s = ("tunnel", u, v, t, "s")
-                reseau.add_edge(sas_e, sas_s, capacity=1)
-                for depart, arrivee in ((u, v), (v, u)):
-                    if depart != "Sd":               # on ne quitte pas le dortoir
-                        reseau.add_edge((depart, "s", t), sas_e, capacity=1)
-                    reseau.add_edge(sas_s, (arrivee, "e", t + 1), capacity=1)
-
-        return reseau
-
-    def _flot_maximum(self, horizon: int):
-        """Valeur et détail du flot maximum pour un horizon donné."""
-        reseau = self._construire_reseau_temporel(horizon)
-        return nx.maximum_flow(reseau, "SOURCE", "PUITS")
-
-    def resoudre(self) -> "Resultat":
-        """Calcule le déplacement optimal de toutes les fourmis.
-
-        1. borne basse : la longueur du plus court chemin Sv → Sd ;
-        2. on augmente l'horizon T tant que le flot maximum < F ;
-        3. le premier T qui fait passer F fourmis est LE minimum d'étapes ;
-        4. on traduit le flot en déplacements individuels de fourmis.
-        """
-        graphe = self.graphe()
-        if not nx.has_path(graphe, "Sv", "Sd"):
-            raise ValueError(f"{self.nom} : aucun chemin entre Sv et Sd !")
-
-        horizon = nx.shortest_path_length(graphe, "Sv", "Sd")
-        limite = horizon + 2 * self.nb_fourmis + len(self.salles)
-
-        while horizon <= limite:
-            valeur, flot = self._flot_maximum(horizon)
-            if valeur >= self.nb_fourmis:
-                etapes = self._traduire_flot(flot, horizon)
-                return Resultat(self, etapes)
-            horizon += 1
-
-        raise RuntimeError(f"{self.nom} : aucune solution trouvée "
-                           f"(horizon exploré jusqu'à {limite}).")
-
-    # ------------------------------------------------------------------
-    # Traduction du flot en déplacements de fourmis
-    # ------------------------------------------------------------------
-
-    def _mouvements_par_etape(self, flot: dict,
-                              horizon: int) -> list[list[tuple[str, str]]]:
-        """Extrait du flot, pour chaque étape, la liste des mouvements
-        (salle de départ, salle d'arrivée)."""
-        mouvements: list[list[tuple[str, str]]] = [[] for _ in range(horizon)]
-        for t in range(horizon):
-            for u, v in self.tunnels:
-                sas_e = ("tunnel", u, v, t, "e")
-                sas_s = ("tunnel", u, v, t, "s")
-                if flot.get(sas_e, {}).get(sas_s, 0) < 1:
-                    continue                    # tunnel inutilisé à l'étape t
-                origine = next(dep for dep in (u, v)
-                               if flot.get((dep, "s", t), {}).get(sas_e, 0) > 0)
-                arrivee = next(arr for arr in (u, v)
-                               if flot[sas_s].get((arr, "e", t + 1), 0) > 0)
-                if origine != arrivee:          # sinon : simple attente
-                    mouvements[t].append((origine, arrivee))
-        return mouvements
-
-    def _traduire_flot(self, flot: dict, horizon: int) -> list[list[Deplacement]]:
-        """Attribue chaque mouvement du flot à une fourmi précise.
-
-        À chaque étape, si k fourmis doivent quitter une salle, on choisit
-        les k fourmis de plus petit numéro présentes dans cette salle :
-        le résultat est déterministe et facile à suivre.
-        """
-        for fourmi in self.fourmis:             # position de départ
-            fourmi.position = "Sv"
-            fourmi.trajet = ["Sv"]
-
-        etapes: list[list[Deplacement]] = []
-        for mouvements in self._mouvements_par_etape(flot, horizon):
-            deplacements: list[Deplacement] = []
-
-            # Regrouper les mouvements par salle de départ.
-            par_origine: dict[str, list[str]] = {}
-            for origine, arrivee in mouvements:
-                par_origine.setdefault(origine, []).append(arrivee)
-
-            # Choisir les fourmis qui partent (plus petits numéros d'abord).
-            affectations: list[tuple[Fourmi, str]] = []
-            for origine, arrivees in par_origine.items():
-                presentes = sorted(
-                    (f for f in self.fourmis if f.position == origine),
-                    key=lambda f: f.numero,
-                )
-                for fourmi, arrivee in zip(presentes, sorted(arrivees)):
-                    affectations.append((fourmi, arrivee))
-
-            # Tous les déplacements d'une étape sont simultanés.
-            for fourmi, arrivee in affectations:
-                deplacements.append(
-                    Deplacement(fourmi.nom, fourmi.position, arrivee))
-                fourmi.deplacer(arrivee)
-
-            for fourmi in self.fourmis:         # mémoriser pour l'animation
-                fourmi.trajet.append(fourmi.position)
-
-            deplacements.sort(key=lambda d: int(d.fourmi[1:]))
-            etapes.append(deplacements)
-
-        return etapes
-
-    def __str__(self) -> str:
-        return (f"Fourmilière « {self.nom} » : {self.nb_fourmis} fourmis, "
-                f"{len(self.salles)} salles, {len(self.tunnels)} tunnels")
-
-
-# ---------------------------------------------------------------------------
-# Le résultat d'une résolution
-# ---------------------------------------------------------------------------
-
-class Resultat:
-    """Le déplacement complet des fourmis, étape par étape."""
-
-    def __init__(self, fourmiliere: Fourmiliere,
-                 etapes: list[list[Deplacement]]) -> None:
-        self.fourmiliere = fourmiliere
-        self.etapes = etapes
-
-    @property
-    def nb_etapes(self) -> int:
-        """Nombre total d'étapes de la solution (le minimum possible)."""
-        return len(self.etapes)
-
-    def texte(self) -> str:
-        """Les étapes au format du brief : +++ E1 +++, f1 - Sv - S1, ..."""
-        lignes: list[str] = []
-        for numero, deplacements in enumerate(self.etapes, start=1):
-            lignes.append(f"+++ E{numero} +++")
-            lignes.extend(str(d) for d in deplacements)
-        return "\n".join(lignes)
-
-    def verifier(self) -> None:
-        """Contrôle que la solution respecte TOUTES les règles du brief.
-
-        Lève une AssertionError si une règle est violée. Cette fonction est
-        notre filet de sécurité : le solveur est optimal par construction,
-        mais on re-vérifie chaque règle, étape par étape, par prudence.
-        """
-        f = self.fourmiliere
-        tunnels = {frozenset(t) for t in f.tunnels}
-        positions = {fourmi.nom: "Sv" for fourmi in f.fourmis}
-
-        for numero, deplacements in enumerate(self.etapes, start=1):
-            tunnels_occupes: set[frozenset] = set()
-            for d in deplacements:
-                assert positions[d.fourmi] == d.origine, \
-                    f"E{numero} : {d.fourmi} n'est pas dans {d.origine}"
-                assert frozenset((d.origine, d.arrivee)) in tunnels, \
-                    f"E{numero} : aucun tunnel {d.origine} - {d.arrivee}"
-                assert frozenset((d.origine, d.arrivee)) not in tunnels_occupes, \
-                    f"E{numero} : tunnel {d.origine} - {d.arrivee} déjà utilisé"
-                tunnels_occupes.add(frozenset((d.origine, d.arrivee)))
-                positions[d.fourmi] = d.arrivee
-
-            for salle in f.salles.values():     # capacités respectées ?
-                if salle.illimitee:
-                    continue
-                occupants = sum(1 for p in positions.values() if p == salle.nom)
-                assert occupants <= salle.capacite, \
-                    f"E{numero} : {salle.nom} dépasse sa capacité"
-
-        assert all(p == "Sd" for p in positions.values()), \
-            "Toutes les fourmis ne sont pas au dortoir !"
-
-    def __str__(self) -> str:
-        return (f"{self.fourmiliere.nom} : {self.fourmiliere.nb_fourmis} "
-                f"fourmis au dortoir en {self.nb_etapes} étapes")
+    return graph, ant_count, optimal_duration, steps

@@ -1,10 +1,17 @@
-f=5
-S1
-S2
-S3
-S4
-Sv - S1
-S1 - S2
-S4 - Sd
-S1 - S4
-S2 - S3
+name=trois
+ants=5
+
+[capacities]
+Sv=5
+Sd=5
+S1=1
+S2=1
+S3=1
+S4=1
+
+[tunnels]
+Sv-S1
+S1-S2
+S4-Sd
+S1-S4
+S2-S3

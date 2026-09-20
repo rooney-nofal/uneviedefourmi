@@ -1,0 +1,28 @@
+Ant hill: trois
+Ants: 5
+Rooms: 6
+Tunnels: 5
+Minimum duration: 7 step(s)
+
++++ E1 +++
+f5 - Sv - S1
++++ E2 +++
+f4 - Sv - S1
+f5 - S1 - S4
++++ E3 +++
+f3 - Sv - S1
+f4 - S1 - S4
+f5 - S4 - Sd
++++ E4 +++
+f2 - Sv - S1
+f3 - S1 - S4
+f4 - S4 - Sd
++++ E5 +++
+f1 - Sv - S1
+f2 - S1 - S4
+f3 - S4 - Sd
++++ E6 +++
+f1 - S1 - S4
+f2 - S4 - Sd
++++ E7 +++
+f1 - S4 - Sd

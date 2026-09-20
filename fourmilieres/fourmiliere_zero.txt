@@ -1,7 +1,14 @@
-f=2
-S1
-S2
-Sv - S1
-Sv - S2
-S1 - Sd
-S2 - Sd
+name=zero
+ants=2
+
+[capacities]
+Sv=2
+Sd=2
+S1=1
+S2=1
+
+[tunnels]
+Sv-S1
+Sv-S2
+S1-Sd
+S2-Sd
