@@ -1,5 +1,4 @@
-name=un
-ants=5
+f=5
 
 [capacities]
 Sv=5

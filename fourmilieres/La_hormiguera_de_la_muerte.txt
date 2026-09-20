@@ -1,5 +1,4 @@
-name=mort
-ants=30
+f=30
 
 [capacities]
 Sv=30

@@ -1,5 +1,4 @@
-name=quatre
-ants=10
+f=10
 
 [capacities]
 Sv=10

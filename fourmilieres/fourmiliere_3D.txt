@@ -1,5 +1,4 @@
-name=3D
-ants=50
+f=50
 
 [capacities]
 Sv=50

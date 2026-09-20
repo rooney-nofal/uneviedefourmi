@@ -1,5 +1,4 @@
-name=at-ant
-ants=100
+f=100
 
 [capacities]
 Sv=100
